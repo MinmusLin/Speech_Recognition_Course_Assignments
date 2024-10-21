@@ -132,6 +132,8 @@ The second image shows an overlay of multiple frames before (top) and after (bot
 
 ### 3.4 Short-Time Fourier Transform (STFT)
 
+The Short-Time Fourier Transform (STFT) is used to convert a time-domain signal into the frequency domain by analyzing small, overlapping frames of the signal. For each frame, the Fourier transform is computed, producing a spectrum that reflects how the frequency content of the signal changes over time. The STFT breaks the signal into individual frames, applies the Fourier transform to each, and generates a time-frequency representation, where each point in the spectrum corresponds to a specific time and frequency.
+
 ```python
 def stft(frames, NFFT):
     """
@@ -160,13 +162,21 @@ NFFT = 512
 spectrum = stft(frames, NFFT)
 ```
 
+The first image shows the frequency spectra of individual frames (356, 597, and 1257) from the audio signal. Each plot reveals the frequency components present in the respective frame, with lower frequencies showing stronger magnitudes, indicating that these frequencies dominate in those frames.
+
 ![](assets/Figure4-1.png)
 
+The second image compares the frequency spectrum of the entire signal (top) with that of a specific frame (frame 510, bottom). The full signal’s spectrum shows a wide range of frequencies present throughout the recording, while the individual frame shows more localized frequency peaks, focusing on specific frequencies at that time point.
+
 ![](assets/Figure4-2.png)
+
+This 3D spectrogram illustrates the result of applying STFT to the signal. The x-axis represents the frame index (or time), the y-axis shows frequency in Hertz, and the z-axis indicates the magnitude of the signal in decibels (dB). The colors range from green to yellow, with yellow regions indicating higher magnitudes (stronger frequencies), while green and blue represent lower magnitudes. This visualization helps to observe how the frequency components of the signal evolve over time.
 
 ![](assets/Figure4-3.png)
 
 ### 3.5 Mel-filter Bank
+
+The Mel-filter bank is designed to mimic the human ear's perception of sound, where the frequency scale is logarithmic rather than linear. It consists of a series of triangular filters spaced along the Mel scale, which emphasize different frequency bands. The Mel scale compresses high frequencies and expands low frequencies to better represent how humans perceive pitch. This transformation is critical for extracting meaningful features (like MFCCs) from audio signals.
 
 ```python
 def mel_filter_bank(num_filters, NFFT, fs):
@@ -224,15 +234,25 @@ mel_spectrum = np.dot(spectrum, filters.T)
 mel_spectrum = np.where(mel_spectrum == 0, np.finfo(float).eps, mel_spectrum)
 ```
 
+The first image shows the response of the Mel-filter bank, illustrating how each triangular filter responds to different frequency bands. The x-axis represents the frequency in Hertz, and the y-axis shows the filter amplitude. Each filter covers a specific range of frequencies, gradually increasing and decreasing to capture energy in those bands.
+
 ![](assets/Figure5-1.png)
+
+The second image is a 3D heatmap that represents the Mel-filter bank responses. The x-axis corresponds to the Mel filter index, the y-axis represents the frequency in Hertz, and the z-axis shows the amplitude. The plot provides a clear visual representation of how each Mel filter reacts to different frequencies in the audio signal.
 
 ![](assets/Figure5-2.png)
 
+The third image is a 3D spectrogram of the Mel-filtered signal. The x-axis represents the frame index (time), the y-axis represents the Mel filter index (frequency bands), and the z-axis indicates the magnitude in decibels (dB). The color variations represent different energy levels across time and frequency.
+
 ![](assets/Figure5-3.png)
+
+The fourth image displays the Mel spectrum for three randomly selected frames from the audio signal. Each frame shows how the energy is distributed across the Mel filters, providing insights into the frequency content at different points in time.
 
 ![](assets/Figure5-4.png)
 
 ### 3.6 Log Transformation
+
+Log transformation is used to compress the dynamic range of the Mel spectrum, simulating how the human ear perceives loudness. This operation converts the spectrum values to a logarithmic scale (in decibels), which allows the smaller magnitude values to be more prominent while compressing the larger ones. This step enhances the interpretability of the frequency content by focusing on perceptually relevant information.
 
 ```python
 def log_magnitude(x):
@@ -252,22 +272,34 @@ def log_magnitude(x):
 log_mel_spectrum = log_magnitude(mel_spectrum)
 ```
 
+The first image displays the 3D log Mel spectrogram, where the Mel-filtered spectrum has been transformed into the logarithmic (dB) scale. The x-axis represents the frame index (time), the y-axis corresponds to the Mel filter index (frequency bands), and the z-axis shows the magnitude in decibels (dB).
+
 ![](assets/Figure6-1.png)
+
+The second image shows the log Mel spectrum for three randomly selected frames, demonstrating how the log transformation has compressed the range of values, allowing easier visualization of variations in magnitude across the Mel filters for each frame.
 
 ![](assets/Figure6-2.png)
 
 ### 3.7 Discrete Cosine Transform (DCT)
+
+The Discrete Cosine Transform (DCT) is applied to the log Mel spectrum to generate Mel Frequency Cepstral Coefficients (MFCCs). This process transforms the frequency-domain representation into a set of coefficients that capture the signal's energy distribution across different frequency bands. The first few MFCCs represent the most important features of the sound, while higher-order coefficients capture finer details. This makes MFCCs highly useful for speech and audio recognition tasks.
 
 ```python
 # Apply DCT to the log Mel spectrum to compute MFCC features
 mfcc_features = dct(log_mel_spectrum, type=2, axis=1, norm='ortho')[:, :13]
 ```
 
+The first image is a 3D plot of the MFCCs across different frames. The x-axis represents the frame index (time), the y-axis corresponds to the MFCC coefficient index (feature dimensions), and the z-axis shows the magnitude of the coefficients. The structure of the MFCCs allows us to observe how sound characteristics evolve over time, with the lower coefficients (near the origin) containing most of the signal's energy.
+
 ![](assets/Figure7-1.png)
+
+The second image shows the MFCCs for three randomly selected frames. Each plot represents the MFCC values for one frame, with the x-axis corresponding to the coefficient index and the y-axis representing the magnitude. The first coefficient is typically larger, capturing the overall energy of the frame, while the other coefficients reflect more subtle spectral details.
 
 ![](assets/Figure7-2.png)
 
 ### 3.8 Dynamic Feature Extraction
+
+Dynamic feature extraction, specifically the calculation of delta and delta-delta (second-order) features, captures the rate of change in the MFCC coefficients over time. This process provides additional information about the temporal dynamics of the signal, improving the robustness of speech or audio recognition systems.
 
 ```python
 def delta(feature_matrix, N=2):
@@ -306,15 +338,25 @@ delta1 = delta(mfcc_features)
 delta2 = delta(delta1)
 ```
 
+The first image is a 3D plot showing the delta (first-order) MFCC features over time, illustrating how the MFCC coefficients evolve and change across frames.
+
 ![](assets/Figure8-1.png)
+
+The second image displays the delta MFCC values for three randomly selected frames, highlighting the temporal variations in the MFCC coefficients.
 
 ![](assets/Figure8-2.png)
 
+The third image is a 3D plot of the delta-delta (second-order) MFCC features over time, further detailing the acceleration of changes in the MFCC values between frames.
+
 ![](assets/Figure8-3.png)
+
+The fourth image shows the delta-delta MFCC values for three randomly selected frames, illustrating the subtle but critical changes in MFCC coefficients' rate of change across time.
 
 ![](assets/Figure8-4.png)
 
 ### 3.9 Feature Transformation
+
+Feature transformation in the MFCC pipeline involves combining the MFCCs, delta, and delta-delta features into a single feature set. To ensure consistency across different recordings and eliminate biases, the features undergo mean normalization (subtracting the mean) and variance normalization (dividing by the standard deviation). These transformations make the features more robust and suitable for machine learning models by removing noise and standardizing the data's scale.
 
 ```python
 # Stack the MFCC, Delta, and Delta-Delta features horizontally (combine them into one feature set)
@@ -327,9 +369,15 @@ cmn_features = stacked_features - np.mean(stacked_features, axis=0)
 cvn_features = cmn_features / np.std(cmn_features, axis=0)
 ```
 
+The image is a 3D plot showing the normalized MFCC, delta, and delta-delta features across time. The x-axis represents the frame index, the y-axis represents the combined feature index, and the z-axis displays the normalized feature values. The plot demonstrates how the features vary and evolve over time, highlighting the smooth transitions achieved through normalization.
+
 ![](assets/Figure9-1.png)
 
 ### 3.10 Principal Component Analysis (PCA)
+
+Principal Component Analysis (PCA) is a widely-used dimensionality reduction technique that transforms the feature space into a smaller set of uncorrelated variables, called principal components, while retaining the most important variance within the data. The goal is to reduce the feature set's dimensionality (MFCC, delta, and delta-delta features combined) while preserving as much relevant information as possible. By applying PCA, we eliminate redundant and correlated features, making the data more efficient for processing and analysis, which is especially useful when dealing with high-dimensional feature sets.
+
+In this implementation, PCA reduces the number of features to a specified number of components ( `n_components=12` in this case). This makes the dataset more manageable for machine learning tasks while still maintaining the key patterns and variability present in the original data.
 
 ```python
 def feature_transformation(features, n_components=12):
@@ -355,8 +403,36 @@ def feature_transformation(features, n_components=12):
 transformed_features, pca_model = feature_transformation(stacked_features)
 ```
 
+This image presents the first 12 principal components (PCs) extracted from the original MFCC, delta, and delta-delta feature set after performing Principal Component Analysis (PCA). Each sub-plot corresponds to one of the principal components, illustrating how the variance is distributed across the time frames (frame index).
+
 ![](assets/Figure10-1.png)
+
+The color intensity represents the amplitude of the features, with brighter regions indicating higher variance and darker regions showing lower variance. As PCA focuses on maximizing variance, the first few components capture the most significant patterns in the data, while subsequent components show diminishing levels of variability. This dimensionality reduction technique helps in reducing redundant information while retaining essential features for further processing.
 
 ## 4 Comparison with `librosa` MFCC
 
+In the comparison between the custom MFCC extraction results and the output from the `librosa` MFCC function, the visual patterns appear largely similar. Both spectrograms display consistent amplitude variations across the MFCC coefficient indices, indicating that the overall signal structure is preserved in both methods. However, subtle differences in intensity and smoothness can be observed.
+
 ![](assets/Figure11-1.png)
+
+**Possible Reasons for the Differences:**
+
+* **Pre-emphasis and Filtering**: The pre-emphasis filter applied in the custom MFCC extraction might differ slightly from the one used internally by `librosa`. This could lead to minor differences in how high-frequency components are emphasized before further processing.
+
+* **Windowing Technique**: The `librosa` package might use a slightly different windowing technique (Hamming window parameters, overlap ratio, etc.), which would affect the framing of the signal and therefore the resulting spectral features.
+
+* **Mel Filter Bank Implementation**: While both the custom code and `librosa` use the Mel scale for frequency warping, there could be differences in how the Mel filter bank is constructed (e.g., the number of filters, filter bandwidth, and how overlapping is handled). These subtle variations could lead to differences in feature resolution and intensity.
+
+* **Normalization and Scaling**: The scaling and normalization steps in the MFCC computation may vary. `librosa` could apply different normalization strategies to the filter bank or the final MFCC coefficients, leading to small differences in the magnitude of the features.
+
+* **Precision and FFT Settings**: Differences in the FFT resolution (e.g., the number of FFT points) and the precision of the internal computations (floating-point precision, etc.) might contribute to the observed discrepancies in the magnitude and smoothness of the spectral output.
+
+Despite these minor differences, both results capture the same core features of the signal, confirming that the custom implementation aligns well with standard methods.
+
+## 5 Conclusion
+
+In this report, we have walked through the detailed process of extracting Mel Frequency Cepstral Coefficients (MFCC) from an audio signal, starting from the raw waveform to feature transformation and comparison with standard libraries like `librosa`. Each step, from pre-emphasis to windowing, STFT, Mel-filter bank, and feature transformation through DCT and PCA, has been discussed with accompanying visualizations to highlight the process and outcomes.
+
+The custom implementation demonstrates the successful extraction of key features, aligned with human auditory perception, and the dynamic feature extraction further enhances temporal analysis. A comparison with `librosa` shows that while minor differences exist due to the implementation specifics of pre-processing steps, windowing, and filter bank design, the overall MFCC structure is preserved, ensuring the reliability of the custom method.
+
+This step-by-step breakdown provides an insightful understanding of the MFCC extraction process and prepares the groundwork for future work in speech and audio signal analysis, where MFCC features are widely applied in machine learning models for tasks like speech recognition, speaker identification, and audio classification.
