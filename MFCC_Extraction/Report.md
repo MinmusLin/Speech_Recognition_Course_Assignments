@@ -34,7 +34,13 @@ from sklearn.decomposition import PCA
 signal, fs = librosa.load('Record.wav', sr=None)
 ```
 
+This figure displays the waveform of the original audio signal, showing the amplitude variations over time. The x-axis represents time in seconds, while the y-axis shows the amplitude of the signal.
+
+![](assets/Figure1-1.png)
+
 ### 3.2 Pre-emphasis
+
+The pre-emphasis step is used to boost the high-frequency components of the audio signal, which tend to be weaker compared to low-frequency components. This process applies a filter to emphasize higher frequencies by subtracting a scaled version of the previous sample from the current sample. This enhances the signal-to-noise ratio for the higher frequencies, making them more distinguishable and improving feature extraction for processes like MFCC.
 
 ```python
 def pre_emphasis(signal, alpha=0.97):
@@ -55,7 +61,17 @@ def pre_emphasis(signal, alpha=0.97):
 emphasized_signal = pre_emphasis(signal)
 ```
 
+The first image compares the waveform of the original audio signal (top) with the emphasized signal after applying the pre-emphasis filter (bottom). In the emphasized signal, the higher frequencies are more pronounced, particularly at sharp changes in the waveform, highlighting the effect of the pre-emphasis step.
+
+![](assets/Figure2-1.png)
+
+The second image displays the frequency spectrum of both the original (top) and pre-emphasized signal (bottom). After pre-emphasis, the lower frequencies are attenuated while the higher frequencies are amplified. This change reflects the purpose of pre-emphasis: to enhance high-frequency components and reduce the dynamic range, leading to a more balanced spectrum for analysis.
+
+![](assets/Figure2-2.png)
+
 ### 3.3 Windowing
+
+In this step, the audio signal is divided into overlapping frames, each of which is multiplied by a Hamming window. The purpose of windowing is to mitigate edge effects by smoothing the transitions between frames, as sharp discontinuities at the frame edges could distort the frequency spectrum during the subsequent Fourier transform. The Hamming window minimizes these discontinuities by reducing the signal amplitude near the frame boundaries while maintaining the center of the frame unaffected.
 
 ```python
 def framing(signal, frame_size, frame_stride, fs):
@@ -106,6 +122,14 @@ frame_stride = 0.01
 frames, frames_windowed, frame_length, total_frames = framing(emphasized_signal, frame_size, frame_stride, fs)
 ```
 
+The first image compares selected frames before and after applying the Hamming window. On the left, the signal is framed without the window, resulting in sharp edges at the boundaries of each frame. On the right, the frames processed with the Hamming window show smoother transitions at the edges, which reduces the likelihood of introducing spectral artifacts in the later steps.
+
+![](assets/Figure3-1.png)
+
+The second image shows an overlay of multiple frames before (top) and after (bottom) applying the Hamming window. In the top plot, the frames without windowing exhibit significant amplitude variations at the edges, which can cause unwanted effects during spectral analysis. The bottom plot shows that after applying the Hamming window, the frames have smooth, tapered edges, leading to better signal representation when the frames are analyzed in the frequency domain.
+
+![](assets/Figure3-2.png)
+
 ### 3.4 Short-Time Fourier Transform (STFT)
 
 ```python
@@ -135,6 +159,12 @@ NFFT = 512
 # Perform STFT on the frames
 spectrum = stft(frames, NFFT)
 ```
+
+![](assets/Figure4-1.png)
+
+![](assets/Figure4-2.png)
+
+![](assets/Figure4-3.png)
 
 ### 3.5 Mel-filter Bank
 
@@ -194,6 +224,14 @@ mel_spectrum = np.dot(spectrum, filters.T)
 mel_spectrum = np.where(mel_spectrum == 0, np.finfo(float).eps, mel_spectrum)
 ```
 
+![](assets/Figure5-1.png)
+
+![](assets/Figure5-2.png)
+
+![](assets/Figure5-3.png)
+
+![](assets/Figure5-4.png)
+
 ### 3.6 Log Transformation
 
 ```python
@@ -214,12 +252,20 @@ def log_magnitude(x):
 log_mel_spectrum = log_magnitude(mel_spectrum)
 ```
 
+![](assets/Figure6-1.png)
+
+![](assets/Figure6-2.png)
+
 ### 3.7 Discrete Cosine Transform (DCT)
 
 ```python
 # Apply DCT to the log Mel spectrum to compute MFCC features
 mfcc_features = dct(log_mel_spectrum, type=2, axis=1, norm='ortho')[:, :13]
 ```
+
+![](assets/Figure7-1.png)
+
+![](assets/Figure7-2.png)
 
 ### 3.8 Dynamic Feature Extraction
 
@@ -260,6 +306,14 @@ delta1 = delta(mfcc_features)
 delta2 = delta(delta1)
 ```
 
+![](assets/Figure8-1.png)
+
+![](assets/Figure8-2.png)
+
+![](assets/Figure8-3.png)
+
+![](assets/Figure8-4.png)
+
 ### 3.9 Feature Transformation
 
 ```python
@@ -272,6 +326,8 @@ cmn_features = stacked_features - np.mean(stacked_features, axis=0)
 # Variance normalization: divide by the standard deviation of each feature
 cvn_features = cmn_features / np.std(cmn_features, axis=0)
 ```
+
+![](assets/Figure9-1.png)
 
 ### 3.10 Principal Component Analysis (PCA)
 
@@ -299,4 +355,8 @@ def feature_transformation(features, n_components=12):
 transformed_features, pca_model = feature_transformation(stacked_features)
 ```
 
+![](assets/Figure10-1.png)
+
 ## 4 Comparison with `librosa` MFCC
+
+![](assets/Figure11-1.png)
