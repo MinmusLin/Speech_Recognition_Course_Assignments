@@ -38,7 +38,7 @@ The goal is to determine the most probable sequence of mood states for each day.
 
 | Start Probabilities | Good | Neutral | Bad |
 | :---: | :---: | :---: | :---: |
-| Probability | 0.333 | 0.333 | 0.333 |
+| Probability | $1/3$ | $1/3$ | $1/3$ |
 
 ## 4 Viterbi Algorithm for Most Probable Mood Sequence
 
@@ -95,37 +95,17 @@ Here’s a detailed breakdown of each day’s calculations:
 
 | Mood | A | C | B | A | C |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| Good | 0.233333 | 0.004667 | 0.000840 | 0.001176 | 0.000024 |
-| Neutral | 0.100000 | 0.021000 | 0.008400 | 0.000504 | 0.000106 |
-| Bad | 0.000000 | 0.105000 | 0.008400 | 0.000000 | 0.000529 |
+| Good | **0.233333** | 0.004667 | 0.000840 | **0.001176** | 0.000024 |
+| Neutral | 0.100000 | 0.021000 | **0.008400** | 0.000504 | 0.000106 |
+| Bad | 0.000000 | **0.105000** | 0.008400 | 0.000000 | **0.000529** |
 
-The final mood sequence for the teacher over the week, based on the Viterbi algorithm's calculations, is:
+The final Viterbi table in the Results section provides the calculated probabilities for each mood state (Good, Neutral, Bad) across each time step, given the observed assignment sequence `[A, C, B, A, C]`. These probabilities illustrate the most likely path to each mood on each day, determined by both the transition probabilities from prior states and the likelihood of observing each assignment given each state.
 
-**Good → Bad → Neutral → Good → Bad**
+The highest probability at each step represents the optimal choice of mood state based on the observed sequence, ultimately leading to the sequence **Good → Bad → Neutral → Good → Bad**. This path signifies the most probable mood progression for the teacher over the week, aligned with the given observations. The Viterbi algorithm's calculations, as detailed, enable a clearer understanding of the inferred "mood curve" by systematically evaluating both transition dynamics and emission likelihoods.
 
-This sequence was derived by selecting the mood state with the highest probability at each step, as determined by the transition and emission probabilities. Here’s a summary of how the path was chosen:
+## 7 Appendix
 
-* **Day 1 (Observation = A)**: Starting with the initial probabilities, the state Good has the highest probability, so the sequence begins with Good.
-
-* **Day 2 (Observation = C)**: Given the transition from Good, the highest probability state is Bad, so the second day is Bad.
-
-* **Day 3 (Observation = B)**: On the third day, transitioning from Bad, the most probable state is Neutral.
-
-* **Day 4 (Observation = A)**: From Neutral on the fourth day, the highest probability state is Good.
-
-* **Day 5 (Observation = C)**: Finally, on the last day, transitioning from Good, the most probable state is Bad.
-
-Thus, the Viterbi algorithm identifies **Good → Bad → Neutral → Good → Bad** as the most likely sequence of mood states that matches the observed assignment pattern across the week.
-
-## 7 Conclusion
-
-The Viterbi algorithm has successfully identified the most probable "mood sequence" for the teacher over the week as **Good → Bad → Neutral → Good → Bad**. This path, calculated through the highest likelihood transitions between mood states, aligns with the observed assignments `[A, C, B, A, C]`. By evaluating transition and emission probabilities, this model provides insight into potential daily mood shifts, reflecting how the teacher's underlying mood state may influence assignment patterns.
-
-The approach exemplifies how Hidden Markov Models (HMMs) and the Viterbi algorithm can analyze sequential data, allowing us to infer hidden states based on observable actions. This methodology could be extended to broader applications where indirect observation of hidden states is required.
-
-## 8 Appendix
-
-The following results are the direct output from the Viterbi algorithm applied to the given model:
+The implementation of the Viterbi algorithm can be run in the `Viterbi_Algorithm.ipynb` file, and it only requires a Python environment with `numpy` installed. The following results are the direct output from the Viterbi algorithm applied to the given model:
 
 ```
 Step-by-Step Calculation:
