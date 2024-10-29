@@ -93,6 +93,12 @@ Here’s a detailed breakdown of each day’s calculations:
 
 ## 6 Results
 
+| Mood | A | C | B | A | C |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| Good | 0.233333 | 0.004667 | 0.000840 | 0.001176 | 0.000024 |
+| Neutral | 0.100000 | 0.021000 | 0.008400 | 0.000504 | 0.000106 |
+| Bad | 0.000000 | 0.105000 | 0.008400 | 0.000000 | 0.000529 |
+
 The final mood sequence for the teacher over the week, based on the Viterbi algorithm's calculations, is:
 
 **Good → Bad → Neutral → Good → Bad**
