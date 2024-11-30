@@ -230,15 +230,7 @@ print('Predicted result: %s' % predicted[0])
 
 ![](assets/2024-11-30_17-31-47.png)
 
-## 9 Experiment Summary
-
-In this experiment, we focused on implementing and understanding the GMM-HMM-based continuous speech recognition system. The main objectives were to apply Gaussian Mixture Models (GMM) and Hidden Markov Models (HMM) to process speech data, extract relevant features using MFCC (Mel Frequency Cepstral Coefficients), and build a speech recognition model on the Huawei MindSpore platform.
-
-We began by preparing the environment on Huawei Cloud's ModelArts platform, where we uploaded the dataset and installed the necessary Python libraries, including `python_speech_features` and `hmmlearn`. The core part of the experiment involved extracting MFCC features from the speech data. These features were then used to train GMM-HMM models, which involved setting appropriate configurations, training the models on the labeled data, and saving the trained models for future inference.
-
-The models were tested on a separate test dataset by scoring them against extracted MFCC features. The top predictions were made by ranking the models based on their scores. Finally, the trained models were applied to predict labels for unseen data, allowing the system to recognize speech content.
-
-## 10 Conclusion
+## 9 Conclusion
 
 In this experiment, we implemented and explored a GMM-HMM-based continuous speech recognition system. The main objectives were to apply Gaussian Mixture Models (GMM) and Hidden Markov Models (HMM) to process speech data, extract relevant features using Mel Frequency Cepstral Coefficients (MFCC), and build a speech recognition model on the Huawei MindSpore platform.
 
