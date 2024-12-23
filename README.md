@@ -15,14 +15,17 @@ A collection of my speech recognition course assignments.
 
 ## 仓库组成
 
+* [GMM-HMM](GMM_HMM)
+基于 GMM-HMM 的连续词语音识别实验和多元高斯模型中均值 $\mu$ 的最大似然估计
+
 * [MFCC Extraction](MFCC_Extraction)
 MFCC 提取
 
+* [MindSpore DeepSpeech2](MindSpore_DeepSpeech2)
+基于 MindSpore 框架的 DeepSpeech2 语音识别模型
+
 * [Viterbi Algorithm](Viterbi_Algorithm)
 维特比算法
-
-* [GMM-HMM](GMM_HMM)
-基于 GMM-HMM 的连续词语音识别实验和多元高斯模型中均值 $\mu$ 的最大似然估计
 
 ## 免责声明
 
@@ -32,4 +35,4 @@ The code and materials contained in this repository are intended for personal le
 
 ## 文档更新日期
 
-2024年11月30日
+2024年12月24日
