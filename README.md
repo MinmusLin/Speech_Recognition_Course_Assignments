@@ -30,7 +30,7 @@ MFCC 提取
 ## 相关仓库
 
 * [Meeting Minutes Assistant](https://github.com/MinmusLin/Meeting_Minutes_Assistant)
-会议纪要助手：一款 AI 驱动的工具, 用于快速将会议录音转换为会议纪要
+会议纪要助手：一款 AI 驱动的工具，用于快速将会议录音转换为会议纪要
 
 ## 免责声明
 
