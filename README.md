@@ -9,10 +9,10 @@
 
 A collection of my speech recognition course assignments.
 
-2024年同济大学语音识别课程作业合集。
+2024 年同济大学语音识别课程作业合集。
 
 > ***Relevant course***
-> * Speech Recognition 2024 (2024年同济大学语音识别)
+> * Speech Recognition 2024 (2024 年同济大学语音识别)
 
 ## 仓库组成
 
